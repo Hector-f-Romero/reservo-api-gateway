@@ -1,0 +1,6 @@
+services:
+  nats-server:
+    container_name: nats-server
+    image: nats:latest
+    ports:
+      - 4222:4222
