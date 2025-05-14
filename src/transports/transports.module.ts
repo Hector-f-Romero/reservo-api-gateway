@@ -11,6 +11,7 @@ import { enviromentVariables, SERVICES } from "src/config";
 				transport: Transport.NATS,
 				options: {
 					servers: enviromentVariables.natsSever,
+					debug: true,
 				},
 			},
 		]),
@@ -22,6 +23,7 @@ import { enviromentVariables, SERVICES } from "src/config";
 				transport: Transport.NATS,
 				options: {
 					servers: enviromentVariables.natsSever,
+					debug: true,
 				},
 			},
 		]),

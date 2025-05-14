@@ -12,6 +12,9 @@ async function bootstrap() {
 	// 1. Set the global prefix for all endpoints.
 	app.setGlobalPrefix("/api/v1");
 
+	// TODO: configure CORS.
+	app.enableCors();
+
 	// 2. Add the custom rpc error handler
 	app.useGlobalFilters(new GlobalRpcExceptionFilter());
 
