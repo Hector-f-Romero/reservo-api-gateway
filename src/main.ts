@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { Logger } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 
 import { AppModule } from "./app.module";
 import { enviromentVariables } from "./config";
@@ -17,6 +17,14 @@ async function bootstrap() {
 
 	// 2. Add the custom rpc error handler
 	app.useGlobalFilters(new GlobalRpcExceptionFilter());
+
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+		}),
+	);
 
 	await app.listen(enviromentVariables.port);
 

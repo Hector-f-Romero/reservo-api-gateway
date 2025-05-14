@@ -1,33 +1,42 @@
-import { Controller, Get, Query } from "@nestjs/common";
-import { MessagePattern, Payload } from "@nestjs/microservices";
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	ParseUUIDPipe,
+	Post,
+	Query,
+} from "@nestjs/common";
+
 import { EventsService } from "./events.service";
+import { CreateEventDto } from "./dto/create-event.dto";
 
 @Controller("events")
 export class EventsController {
 	constructor(private readonly eventsService: EventsService) {}
 
-	@Get("/upcoming/today")
-	getUpcomingEventsToday(@Query("date") date: string) {
-		return this.eventsService.getUpcomingEventsToday(date);
+	@Get()
+	find() {
+		return this.eventsService.find();
 	}
 
-	// @MessagePattern('findAllEvents')
-	// findAll() {
-	//   return this.eventsService.findAll();
-	// }
+	@Get("/upcoming")
+	findUpcomingvents() {
+		return this.eventsService.findUpcomingEvents();
+	}
 
-	// @MessagePattern('findOneEvent')
-	// findOne(@Payload() id: number) {
-	//   return this.eventsService.findOne(id);
-	// }
+	@Get("/upcoming/today")
+	findUpcomingEventsToday(@Query("date") date: string) {
+		return this.eventsService.findUpcomingEventsToday(date);
+	}
 
-	// @MessagePattern('updateEvent')
-	// update(@Payload() updateEventDto: UpdateEventDto) {
-	//   return this.eventsService.update(updateEventDto.id, updateEventDto);
-	// }
+	@Get(":id")
+	findOne(@Param("id", ParseUUIDPipe) id: string) {
+		return this.eventsService.findOne(id);
+	}
 
-	// @MessagePattern('removeEvent')
-	// remove(@Payload() id: number) {
-	//   return this.eventsService.remove(id);
-	// }
+	@Post()
+	create(@Body() createEventDto: CreateEventDto) {
+		return this.eventsService.create(createEventDto);
+	}
 }

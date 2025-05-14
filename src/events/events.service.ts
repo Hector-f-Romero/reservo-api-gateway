@@ -1,7 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { SERVICES } from "src/config";
 import { ClientProxy, RpcException } from "@nestjs/microservices";
 import { catchError } from "rxjs/internal/operators/catchError";
+
+import { SERVICES } from "src/config";
+import { CreateEventDto } from "./dto/create-event.dto";
 
 @Injectable()
 export class EventsService {
@@ -9,32 +11,43 @@ export class EventsService {
 		@Inject(SERVICES.NATS_SERVICE) private readonly client: ClientProxy,
 	) {}
 
-	getUpcomingEventsToday(date: string) {
-		return this.client.send("events.get.upcoming", date).pipe(
-			// Estamos manejando los errores que vengan del servidor de NATS
+	find() {
+		return this.client.send("events.get.all", { msg: "ok" }).pipe(
 			catchError((error) => {
 				throw new RpcException(error);
 			}),
 		);
 	}
 
-	// create(createEventDto: CreateEventDto) {
-	//   return 'This action adds a new event';
-	// }
+	findUpcomingEvents() {
+		return this.client.send("events.get.upcoming", { msg: "ok" }).pipe(
+			catchError((error) => {
+				throw new RpcException(error);
+			}),
+		);
+	}
 
-	// findAll() {
-	//   return `This action returns all events`;
-	// }
+	findUpcomingEventsToday(date: string) {
+		return this.client.send("events.get.upcoming.today", date).pipe(
+			catchError((error) => {
+				throw new RpcException(error);
+			}),
+		);
+	}
 
-	// findOne(id: number) {
-	//   return `This action returns a #${id} event`;
-	// }
+	findOne(id: string) {
+		return this.client.send("events.get.id", id).pipe(
+			catchError((error) => {
+				throw new RpcException(error);
+			}),
+		);
+	}
 
-	// update(id: number, updateEventDto: UpdateEventDto) {
-	//   return `This action updates a #${id} event`;
-	// }
-
-	// remove(id: number) {
-	//   return `This action removes a #${id} event`;
-	// }
+	create(createEventDto: CreateEventDto) {
+		return this.client.send("events.create", createEventDto).pipe(
+			catchError((error) => {
+				throw new RpcException(error);
+			}),
+		);
+	}
 }
