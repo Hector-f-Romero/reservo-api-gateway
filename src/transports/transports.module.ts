@@ -12,6 +12,7 @@ import { enviromentVariables, SERVICES } from "src/config";
 				options: {
 					servers: enviromentVariables.natsSever,
 					debug: true,
+					timeout: 10000,
 				},
 			},
 		]),
@@ -24,6 +25,7 @@ import { enviromentVariables, SERVICES } from "src/config";
 				options: {
 					servers: enviromentVariables.natsSever,
 					debug: true,
+					timeout: 10000,
 				},
 			},
 		]),
