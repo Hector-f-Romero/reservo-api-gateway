@@ -20,12 +20,12 @@ export class EventsController {
 		return this.eventsService.find();
 	}
 
-	@Get("/upcoming")
+	@Get("/upcoming-detailed")
 	findUpcomingvents() {
 		return this.eventsService.findUpcomingEvents();
 	}
 
-	@Get("/upcoming/today")
+	@Get("/upcoming")
 	findUpcomingEventsToday(@Query("date") date: string) {
 		return this.eventsService.findUpcomingEventsToday(date);
 	}
