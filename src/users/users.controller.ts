@@ -7,13 +7,16 @@ import {
 	Param,
 	Delete,
 	ParseUUIDPipe,
+	UseInterceptors,
 } from "@nestjs/common";
 import { UUID } from "node:crypto";
 
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { NatsMessagesInterceptor } from "src/common/interceptors/natsMessages.interceptor";
 
+@UseInterceptors(NatsMessagesInterceptor)
 @Controller("users")
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
@@ -29,8 +32,13 @@ export class UsersController {
 	}
 
 	@Get(":id")
-	findOne(@Param("id") id: UUID) {
-		return this.usersService.findOne(id);
+	async findOne(@Param("id") id: UUID) {
+		console.log("INICIANDO CONTROLADOR");
+		console.log("---------------------------");
+		const res1 = await this.usersService.findOne(id);
+		console.log("TERMINÓ EL SERVICIO");
+		console.log("---------------------------");
+		return res1;
 	}
 
 	@Patch(":id")

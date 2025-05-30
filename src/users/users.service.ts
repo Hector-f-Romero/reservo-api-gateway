@@ -15,69 +15,45 @@ export class UsersService {
 	) {}
 
 	async create(createUserDto: CreateUserDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.create", createUserDto),
-			);
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		const response = await firstValueFrom(
+			this.client.send("users.create", createUserDto),
+		);
+		return JSON.parse(response);
 	}
 
 	async findAll() {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.get.all", "ok"),
-			);
+		const response = await firstValueFrom(
+			this.client.send("users.get.all", "ok"),
+		);
 
-			return response;
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		return response;
 	}
 
 	async findOne(id: UUID) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.get.id", id),
-			);
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		const response = await firstValueFrom(
+			this.client.send("users.get.id", id),
+		);
+		return response;
 	}
 
 	async login(loginUserDto: LoginUserDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.login", loginUserDto),
-			);
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		const response = await firstValueFrom(
+			this.client.send("users.login", loginUserDto),
+		);
+		return JSON.parse(response);
 	}
 
 	async update(id: UUID, updateUserDto: UpdateUserDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.update", { ...updateUserDto, id }),
-			);
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		const response = await firstValueFrom(
+			this.client.send("users.update", { ...updateUserDto, id }),
+		);
+		return JSON.parse(response);
 	}
 
 	async remove(id: UUID) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("users.delete", id),
-			);
-			return response;
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		const response = await firstValueFrom(
+			this.client.send("users.delete", id),
+		);
+		return response;
 	}
 }
