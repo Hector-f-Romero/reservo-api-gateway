@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { ClientProxy, RpcException } from "@nestjs/microservices";
+import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 
 import { SERVICES } from "src/config";
@@ -11,15 +11,20 @@ export class AuthService {
 		@Inject(SERVICES.NATS_SERVICE) private readonly client: ClientProxy,
 	) {}
 
+	async verifyToken(token: string) {
+		// 1. Verify if the JWT is valid through the Java MS.
+		const verifyTokenResponse = await firstValueFrom(
+			this.client.send("auth.verify", token),
+		);
+		return verifyTokenResponse;
+	}
+
 	async login(loginUserDto: LoginUserDto) {
-		const response = await firstValueFrom(
-			this.client.send("users.login", loginUserDto),
+		// 1. Verify if the user exists and the password is correct through the Java MS.
+		const loginResponse = await firstValueFrom(
+			this.client.send("auth.login", loginUserDto),
 		);
 
-		if (response.code === 400) {
-			throw new RpcException(response.message);
-		}
-
-		return JSON.parse(response);
+		return loginResponse;
 	}
 }
