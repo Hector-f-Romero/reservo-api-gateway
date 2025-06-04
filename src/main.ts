@@ -1,5 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { Logger, ValidationPipe } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
 
 import { AppModule } from "./app.module";
 import { enviromentVariables } from "./config";
@@ -13,7 +14,13 @@ async function bootstrap() {
 	app.setGlobalPrefix("/api/v1");
 
 	// TODO: configure CORS.
-	app.enableCors();
+	app.enableCors({
+		origin: ["http://localhost:4321"],
+		credentials: true,
+	});
+
+	// 1.2 Configure cookies.
+	app.use(cookieParser());
 
 	// 2. Add the custom rpc error handler
 	app.useGlobalFilters(new GlobalRpcExceptionFilter());
