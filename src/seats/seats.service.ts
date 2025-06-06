@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy, RpcException } from "@nestjs/microservices";
+import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { UUID } from "node:crypto";
 
@@ -13,53 +13,37 @@ export class SeatsService {
 	constructor(@Inject(SERVICES.NATS_SERVICE) readonly client: ClientProxy) {}
 
 	async findOne(id: UUID) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("seats.get.id", id),
-			);
+		const response = await firstValueFrom(
+			this.client.send("seats.get.id", id),
+		);
 
-			return response;
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		return response;
 	}
 
 	async create(createSeatDto: CreateSeatDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("seats.create", createSeatDto),
-			);
+		const response = await firstValueFrom(
+			this.client.send("seats.create", createSeatDto),
+		);
 
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		return response;
 	}
 
 	async createAll(createAllSeatsDto: CreateAllSeatsDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("seats.create.all", createAllSeatsDto),
-			);
+		const response = await firstValueFrom(
+			this.client.send("seats.create.all", createAllSeatsDto),
+		);
 
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		return response;
 	}
 
 	async update(id: UUID, updateSeatDto: UpdateSeatDto) {
-		try {
-			const response = await firstValueFrom(
-				this.client.send("seats.update", {
-					id,
-					updateSeatRequestDto: updateSeatDto,
-				}),
-			);
+		const response = await firstValueFrom(
+			this.client.send("seats.update", {
+				id,
+				updateSeatRequestDto: updateSeatDto,
+			}),
+		);
 
-			return JSON.parse(response);
-		} catch (error) {
-			throw new RpcException(error);
-		}
+		return response;
 	}
 }

@@ -5,15 +5,18 @@ import {
 	Body,
 	Patch,
 	Param,
-	Delete,
 	ParseUUIDPipe,
+	UseInterceptors,
 } from "@nestjs/common";
+import { UUID } from "node:crypto";
+
 import { SeatsService } from "./seats.service";
 import { CreateSeatDto } from "./dto/create-seat.dto";
 import { UpdateSeatDto } from "./dto/update-seat.dto";
-import { UUID } from "node:crypto";
 import { CreateAllSeatsDto } from "./dto/create-all-seats.dto";
+import { NatsMessagesInterceptor } from "src/common/interceptors/natsMessages.interceptor";
 
+@UseInterceptors(NatsMessagesInterceptor)
 @Controller("seats")
 export class SeatsController {
 	constructor(private readonly seatsService: SeatsService) {}
