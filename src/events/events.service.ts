@@ -38,7 +38,7 @@ export class EventsService {
 
 	async findUpcomingEventsByDate(date: string) {
 		const response = await firstValueFrom(
-			this.client.send("events.get.upcoming.today", date),
+			this.client.send("events.get.upcoming.date", date),
 		);
 
 		return response;
