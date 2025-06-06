@@ -32,13 +32,8 @@ export class UsersController {
 	}
 
 	@Get(":id")
-	async findOne(@Param("id") id: UUID) {
-		console.log("INICIANDO CONTROLADOR");
-		console.log("---------------------------");
-		const res1 = await this.usersService.findOne(id);
-		console.log("TERMINÓ EL SERVICIO");
-		console.log("---------------------------");
-		return res1;
+	findOne(@Param("id") id: UUID) {
+		return this.usersService.findOne(id);
 	}
 
 	@Patch(":id")

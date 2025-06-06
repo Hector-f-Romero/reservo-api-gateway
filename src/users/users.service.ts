@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy, RpcException } from "@nestjs/microservices";
+import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { UUID } from "node:crypto";
 
@@ -18,7 +18,7 @@ export class UsersService {
 		const response = await firstValueFrom(
 			this.client.send("users.create", createUserDto),
 		);
-		return JSON.parse(response);
+		return response;
 	}
 
 	async findAll() {
@@ -40,14 +40,14 @@ export class UsersService {
 		const response = await firstValueFrom(
 			this.client.send("users.login", loginUserDto),
 		);
-		return JSON.parse(response);
+		return response;
 	}
 
 	async update(id: UUID, updateUserDto: UpdateUserDto) {
 		const response = await firstValueFrom(
 			this.client.send("users.update", { ...updateUserDto, id }),
 		);
-		return JSON.parse(response);
+		return response;
 	}
 
 	async remove(id: UUID) {
