@@ -1,0 +1,5 @@
+export enum SeatState {
+	AVAILABLE = "AVAILABLE",
+	PENDING = "PENDING",
+	OCCUPIED = "OCCUPIED",
+}
