@@ -11,6 +11,7 @@ import { CookieOptions, Response } from "express";
 import { AuthService } from "./auth.service";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { NatsMessagesInterceptor } from "src/common/interceptors/natsMessages.interceptor";
+import { PublicRoute } from "src/common/decorators/public-route.decorator";
 
 @UseInterceptors(NatsMessagesInterceptor)
 @Controller("auth")
@@ -24,6 +25,7 @@ export class AuthController {
 
 	constructor(private readonly authService: AuthService) {}
 
+	@PublicRoute()
 	@Post("/login")
 	async login(
 		@Res({ passthrough: true }) response: Response,
