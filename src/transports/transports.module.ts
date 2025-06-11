@@ -21,15 +21,17 @@ import { NatsClientWrapper } from "./nats-client-wrapper.service";
 	],
 	providers: [
 		{
-			/*
-			 * ESPECIFICAMOS QUE CUANDO ALGUIEN QUIERA INYECTAR ESTE PROVIDER (NatsClientWrapper),
-			 * DEBA SEGUIR ESTA CONFIGURACIÓN. ESTO PERMITE, QUE SIEMPRE USE EL MISMO CLIENT PROXY,
-			 * PERO ANTERIORMENTE DEBE CONFIGURARSE.
-			 * INYECTAMOS EL CLIENTE NATS CONFIGURADO ARRIBA.
+			/**
+			 * This provider makes NatsClientWrapper globally available with a configured NATS client.
+			 *
+			 * We define a factory that receives a configured ClientProxy (set up in ClientsModule above),
+			 * and returns an instance of NatsClientWrapper.
+			 *
+			 * This way, the wrapper always uses the same centralized ClientProxy instance for NATS communication,
+			 * keeping the logic clean and consistent across services.
 			 */
-
-			provide: NatsClientWrapper, // VAMOS A EXPORTAR UNA ÚNICA CLASE QUE MANEJA LAS CONEXIONES DE NATS. PARA ESO, CREAMOS EL PROVIDER A NIVEL DE MÓDULO Y LE ESPECIFICAMOS AQUÍ QUE DEPENDENCIA NECESITA, PARA NO DEFINIRLA DENTRO DEL SERVICIO
-			useFactory: (client: ClientProxy) => new NatsClientWrapper(client), // CUANDO NEST NECESITE CREAR LA INSTANCIA, HACE EL NEW
+			provide: NatsClientWrapper,
+			useFactory: (client: ClientProxy) => new NatsClientWrapper(client),
 			inject: [{ token: SERVICES.NATS_SERVICE, optional: false }],
 		},
 	],
