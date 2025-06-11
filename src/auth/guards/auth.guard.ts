@@ -1,22 +1,20 @@
 import {
 	CanActivate,
 	ExecutionContext,
-	Inject,
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Request } from "express";
 import { firstValueFrom } from "rxjs";
 import { Reflector } from "@nestjs/core";
-import { ClientProxy } from "@nestjs/microservices";
 
-import { SERVICES } from "src/config";
 import { IS_PUBLIC_ROUTE } from "src/common/decorators/public-route.decorator";
+import { NatsClientWrapper } from "src/transports/nats-client-wrapper.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 	constructor(
-		@Inject(SERVICES.NATS_SERVICE) private readonly client: ClientProxy,
+		private readonly natsClient: NatsClientWrapper,
 		private readonly reflector: Reflector,
 	) {}
 
@@ -41,14 +39,7 @@ export class AuthGuard implements CanActivate {
 		}
 
 		// 5. Send the token to Auth MS via NATS to verify its validity.
-		const authMSResponse = await firstValueFrom(
-			this.client.send("auth.verify", token),
-		);
-
-		// 6. If the Auth MS response is not successful, deny access.
-		if (authMSResponse.code !== 200) {
-			throw new UnauthorizedException("Invalid auth token.");
-		}
+		await this.natsClient.send("auth.verify", token);
 
 		return true;
 	}

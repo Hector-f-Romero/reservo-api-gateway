@@ -1,30 +1,23 @@
-import { Injectable, Inject } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
-import { firstValueFrom } from "rxjs";
+import { Injectable } from "@nestjs/common";
 
-import { SERVICES } from "src/config";
 import { LoginUserDto } from "./dto/login-user.dto";
+import { NatsClientWrapper } from "src/transports/nats-client-wrapper.service";
+import { LoginUserResponseDto } from "./dto/login-user-response.dto";
 
 @Injectable()
 export class AuthService {
-	constructor(
-		@Inject(SERVICES.NATS_SERVICE) private readonly client: ClientProxy,
-	) {}
+	constructor(private readonly natsClient: NatsClientWrapper) {}
 
 	async verifyToken(token: string) {
 		// 1. Verify if the JWT is valid through the Java MS.
-		const verifyTokenResponse = await firstValueFrom(
-			this.client.send("auth.verify", token),
-		);
-		return verifyTokenResponse;
+		return await this.natsClient.send("auth.verify", token);
 	}
 
 	async login(loginUserDto: LoginUserDto) {
 		// 1. Verify if the user exists and the password is correct through the Java MS.
-		const loginResponse = await firstValueFrom(
-			this.client.send("auth.login", loginUserDto),
+		return await this.natsClient.send<LoginUserResponseDto>(
+			"auth.login",
+			loginUserDto,
 		);
-
-		return loginResponse;
 	}
 }

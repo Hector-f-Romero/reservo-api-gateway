@@ -1,49 +1,34 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
-import { firstValueFrom } from "rxjs";
+import { Injectable } from "@nestjs/common";
 import { UUID } from "node:crypto";
 
-import { SERVICES } from "src/config";
 import { CreateSeatDto } from "./dto/create-seat.dto";
 import { UpdateSeatDto } from "./dto/update-seat.dto";
 import { CreateAllSeatsDto } from "./dto/create-all-seats.dto";
+import { NatsClientWrapper } from "src/transports/nats-client-wrapper.service";
 
 @Injectable()
 export class SeatsService {
-	constructor(@Inject(SERVICES.NATS_SERVICE) readonly client: ClientProxy) {}
+	constructor(private readonly natsClient: NatsClientWrapper) {}
 
 	async findOne(id: UUID) {
-		const response = await firstValueFrom(
-			this.client.send("seats.get.id", id),
-		);
-
-		return response;
+		return await this.natsClient.send("seats.get.id", id);
 	}
 
 	async create(createSeatDto: CreateSeatDto) {
-		const response = await firstValueFrom(
-			this.client.send("seats.create", createSeatDto),
-		);
-
-		return response;
+		return await this.natsClient.send("seats.create", createSeatDto);
 	}
 
 	async createAll(createAllSeatsDto: CreateAllSeatsDto) {
-		const response = await firstValueFrom(
-			this.client.send("seats.create.all", createAllSeatsDto),
+		return await this.natsClient.send(
+			"seats.create.all",
+			createAllSeatsDto,
 		);
-
-		return response;
 	}
 
 	async update(id: UUID, updateSeatDto: UpdateSeatDto) {
-		const response = await firstValueFrom(
-			this.client.send("seats.update", {
-				id,
-				updateSeatRequestDto: updateSeatDto,
-			}),
-		);
-
-		return response;
+		return await this.natsClient.send("seats.update", {
+			id,
+			updateSeatRequestDto: updateSeatDto,
+		});
 	}
 }

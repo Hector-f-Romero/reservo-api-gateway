@@ -6,14 +6,11 @@ import {
 	ParseUUIDPipe,
 	Post,
 	Query,
-	UseInterceptors,
 } from "@nestjs/common";
 
 import { EventsService } from "./events.service";
 import { CreateEventDto } from "./dto/create-event.dto";
-import { NatsMessagesInterceptor } from "src/common/interceptors/natsMessages.interceptor";
 
-@UseInterceptors(NatsMessagesInterceptor)
 @Controller("events")
 export class EventsController {
 	constructor(private readonly eventsService: EventsService) {}

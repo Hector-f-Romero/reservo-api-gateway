@@ -1,92 +1,62 @@
-import {
-	BadRequestException,
-	HttpStatus,
-	Inject,
-	Injectable,
-} from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
-import { firstValueFrom } from "rxjs";
+import { Injectable } from "@nestjs/common";
 import { UUID } from "node:crypto";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { SERVICES } from "src/config";
 import { LoginUserDto } from "./dto/login-user.dto";
+import { NatsClientWrapper } from "src/transports/nats-client-wrapper.service";
+import { CreateUserResponseDto } from "./dto/create-user-response.dto";
 
 @Injectable()
 export class UsersService {
-	constructor(
-		@Inject(SERVICES.NATS_SERVICE) private readonly client: ClientProxy,
-	) {}
+	constructor(private readonly natsClient: NatsClientWrapper) {}
 
 	async create(createUserDto: CreateUserDto) {
 		// 1. Create the user in DB
-		const userMSresponse = await firstValueFrom(
-			this.client.send("users.create", createUserDto),
-		);
+		const userMSResponse =
+			await this.natsClient.send<CreateUserResponseDto>(
+				"users.create",
+				createUserDto,
+			);
 
-		if (userMSresponse.code !== 200) {
-			return userMSresponse;
-		}
-
-		console.log(userMSresponse);
-		const { id, username } = userMSresponse.message;
+		const { id, username } = userMSResponse;
 
 		// 2. Generate JWT for the new user.
-		const authMSResponse = await firstValueFrom(
-			this.client.send("auth.signup", { id, username }),
+		const authMSResponse = await this.natsClient.send<{ token: string }>(
+			"auth.signup",
+			{
+				id,
+				username,
+			},
 		);
 
-		if (authMSResponse.code !== 200) {
-			return authMSResponse;
-		}
-
-		console.log("AUTH RESPONSE");
-		console.log(authMSResponse);
-
+		// 3. Return the user created and its JWT
 		return {
-			code: HttpStatus.OK,
-			status: HttpStatus[HttpStatus.OK],
-			message: {
-				user: userMSresponse.message,
-				token: authMSResponse.message.token,
-			},
+			user: userMSResponse,
+			token: authMSResponse.token,
 		};
 	}
 
 	async findAll() {
-		const response = await firstValueFrom(
-			this.client.send("users.get.all", "ok"),
-		);
-
-		return response;
+		return await this.natsClient.send("users.get.all", "ok");
 	}
 
 	async findOne(id: UUID) {
-		const response = await firstValueFrom(
-			this.client.send("users.get.id", id),
-		);
-		return response;
+		return await this.natsClient.send("users.get.id", id);
 	}
 
 	async login(loginUserDto: LoginUserDto) {
-		const response = await firstValueFrom(
-			this.client.send("users.login", loginUserDto),
-		);
-		return response;
+		return await this.natsClient.send("users.login", loginUserDto);
 	}
 
 	async update(id: UUID, updateUserDto: UpdateUserDto) {
-		const response = await firstValueFrom(
-			this.client.send("users.update", { ...updateUserDto, id }),
-		);
-		return response;
+		return await this.natsClient.send("users.update", {
+			...updateUserDto,
+			id,
+		});
 	}
 
 	async remove(id: UUID) {
-		const response = await firstValueFrom(
-			this.client.send("users.delete", id),
-		);
-		return response;
+		return await this.natsClient.send("users.delete", id);
 	}
 }

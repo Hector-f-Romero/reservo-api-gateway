@@ -1,26 +1,17 @@
-import {
-	Controller,
-	Post,
-	Body,
-	UseInterceptors,
-	Res,
-	HttpStatus,
-} from "@nestjs/common";
+import { Controller, Post, Body, Res, Delete, HttpCode } from "@nestjs/common";
 import { CookieOptions, Response } from "express";
 
 import { AuthService } from "./auth.service";
 import { LoginUserDto } from "./dto/login-user.dto";
-import { NatsMessagesInterceptor } from "src/common/interceptors/natsMessages.interceptor";
+
 import { PublicRoute } from "src/common/decorators/public-route.decorator";
 
-@UseInterceptors(NatsMessagesInterceptor)
 @Controller("auth")
 export class AuthController {
 	private readonly COOKIE_OPTIONS: CookieOptions = {
 		httpOnly: true,
 		secure: false,
 		sameSite: "lax",
-		maxAge: 1000 * 60 * 60 * 24,
 	};
 
 	constructor(private readonly authService: AuthService) {}
@@ -32,36 +23,26 @@ export class AuthController {
 		@Body() loginUserDto: LoginUserDto,
 	) {
 		// 1. Use the Auth MS using the service.
-		const msResponse = await this.authService.login(loginUserDto);
+		const { id, token, username } =
+			await this.authService.login(loginUserDto);
 
 		// 2. If login is successful, add the JWT to the cookie.
-		if (msResponse.code === 200) {
-			response.cookie(
-				"access-token",
-				msResponse.message.token,
-				this.COOKIE_OPTIONS,
-			);
+		response.cookie("access-token", token, {
+			...this.COOKIE_OPTIONS,
+			maxAge: 1000 * 60 * 60 * 2,
+		});
 
-			const { username, id } = msResponse.message;
-
-			return {
-				code: HttpStatus.OK,
-				status: HttpStatus[HttpStatus.OK],
-				message: { username, id },
-			};
-		}
-
-		return msResponse;
+		return { username, id };
 	}
 
-	@Post("/logout")
+	@Delete("/logout")
+	@HttpCode(204)
 	logOut(@Res({ passthrough: true }) response: Response) {
-		response.clearCookie("access-token", this.COOKIE_OPTIONS);
-		return {
-			code: HttpStatus.OK,
-			status: HttpStatus[HttpStatus.OK],
-			message: "Logout successful",
-		};
+		response.clearCookie("access-token", {
+			httpOnly: true,
+			secure: false,
+			sameSite: "lax",
+		});
 	}
 
 	@Post("/verify")
