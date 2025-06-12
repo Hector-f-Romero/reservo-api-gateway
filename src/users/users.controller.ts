@@ -8,6 +8,7 @@ import {
 	Delete,
 	ParseUUIDPipe,
 	Res,
+	HttpCode,
 } from "@nestjs/common";
 import { UUID } from "node:crypto";
 import { CookieOptions, Response } from "express";
@@ -17,8 +18,17 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
 import { PublicRoute } from "src/common/decorators/public-route.decorator";
+import {
+	ApiCookieAuth,
+	ApiNoContentResponse,
+	ApiNotFoundResponse,
+	ApiOperation,
+	ApiParam,
+	ApiSecurity,
+} from "@nestjs/swagger";
 
 @Controller("users")
+@ApiCookieAuth("cookie-auth")
 export class UsersController {
 	private readonly COOKIE_OPTIONS: CookieOptions = {
 		httpOnly: true,
@@ -31,6 +41,8 @@ export class UsersController {
 
 	@PublicRoute()
 	@Post()
+	@ApiSecurity(undefined)
+	@ApiOperation({ summary: "Create a new user" })
 	async create(
 		@Res({ passthrough: true }) response: Response,
 		@Body() createUserDto: CreateUserDto,
@@ -45,16 +57,31 @@ export class UsersController {
 	}
 
 	@Get()
+	@ApiOperation({ summary: "Get all users" })
 	findAll() {
 		return this.usersService.findAll();
 	}
 
 	@Get(":id")
+	@ApiOperation({ summary: "Get user by ID" })
+	@ApiParam({
+		name: "id",
+		type: "string",
+		description: "User UUID v4",
+		example: "03634755-5055-4b9f-a9a9-5de014214b5e",
+	})
 	findOne(@Param("id") id: UUID) {
 		return this.usersService.findOne(id);
 	}
 
 	@Patch(":id")
+	@ApiOperation({ summary: "Update user by ID" })
+	@ApiParam({
+		name: "id",
+		type: "string",
+		description: "User UUID v4",
+		example: "03634755-5055-4b9f-a9a9-5de014214b5e",
+	})
 	update(
 		@Param("id", ParseUUIDPipe) id: UUID,
 		@Body() updateUserDto: UpdateUserDto,
@@ -63,7 +90,17 @@ export class UsersController {
 	}
 
 	@Delete(":id")
+	@HttpCode(204)
+	@ApiOperation({ summary: "Delete user by ID" })
+	@ApiParam({
+		name: "id",
+		type: "string",
+		description: "User UUID v4",
+		example: "03634755-5055-4b9f-a9a9-5de014214b5e",
+	})
+	@ApiNoContentResponse({ description: "User deleted" })
+	@ApiNotFoundResponse({ description: "User not found" })
 	remove(@Param("id", ParseUUIDPipe) id: UUID) {
-		return this.usersService.remove(id);
+		this.usersService.remove(id);
 	}
 }
