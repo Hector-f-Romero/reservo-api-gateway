@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="public/Reservo combined mark.svg" alt="Reservo combined mark" />
+    <img src="public/Reservo-combined-mark.svg" alt="Reservo combined mark" />
 </p>
 
 # Tabla de contenidos
@@ -28,7 +28,9 @@ Reservo está compuesto por cinco repositorios:
 - [App híbrida de NestJS que utiliza WebSockets y se comunica entre microservicios ⌚](https://github.com/Hector-f-Romero/reservo-ws-ms)
 - [Microservicio de NestJS dedicado a la autenticación 🔐](https://github.com/Hector-f-Romero/reservo-auth-ms)
 
-![Diagrama de arquitectura](public/Reservo architecture diagram.png)
+<p align="center">
+    <img src="public/Reservo-architecture-diagram.svg" alt="Diagrama de arquitectura de Reservo" />
+</p>
 
 En cada repositorio he documentado los principales retos enfrentados y los aprendizajes obtenidos durante el desarrollo. Mirando hacia atrás, solo puedo sentirme orgulloso del esfuerzo invertido y del resultado alcanzado con este proyecto.
 

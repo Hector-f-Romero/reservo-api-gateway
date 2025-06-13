@@ -10,7 +10,13 @@
    xml:space="preserve"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs1" /><g
+     id="defs1" /><rect
+     style="fill:#ffffff;stroke-width:0.264583"
+     id="rect1"
+     width="171.97917"
+     height="66.145836"
+     x="1.1026906e-05"
+     y="2.6395634e-07" /><g
      id="layer3"
      transform="translate(-161.73238,5.6324713)"><g
        id="g2"
