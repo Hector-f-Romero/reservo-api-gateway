@@ -6,11 +6,11 @@
 
 - [Table of Contents](#table-of-contents)
 - [Reservo Background and Purpose](#reservo-background-and-purpose)
-- [Reservo Gateway](#reservo-gateway-)
-- [Environment Setup](#environment-setup-)
+- [Reservo Gateway 🧠](#reservo-gateway-)
+- [Environment Setup ⚙](#environment-setup-)
   - [Prerequisites](#prerequisites)
   - [Project Initialization](#project-initialization)
-- [Licencia](#licencia)
+- [Licence](#licence)
 
 # Reservo Background and Purpose
 
@@ -72,6 +72,6 @@ One of the main challenges in this repository was standardizing how responses we
 
 By default, the API documentation is available at: `http://localhost:3000/api` .
 
-# Licencia
+# Licence
 
 See the `LICENSE` file for more information.
