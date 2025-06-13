@@ -1,99 +1,74 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+    <img src="public/Reservo combined mark.svg" alt="Reservo combined mark" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Table of Contents
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [Table of Contents](#table-of-contents)
+- [Reservo Background and Purpose](#reservo-background-and-purpose)
+- [Reservo Gateway](#reservo-gateway-)
+- [Environment Setup](#environment-setup-)
+  - [Prerequisites](#prerequisites)
+  - [Project Initialization](#project-initialization)
+- [Licencia](#licencia)
 
-## Description
+# Reservo Background and Purpose
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Reservo began as a personal project with **the goal of learning and experimenting firsthand with microservices architecture**, understanding both its strengths and challenges while building a solution to manage auditorium reservations.
 
-## Project setup
+I also wanted to explore a technology outside the JavaScript ecosystem for building web servers, so I chose Java 17 with Spring Boot as the project's core. This journey allowed me to acquire new knowledge, reinforce best practices, and build a repository designed to offer a clean and maintainable development experience.
 
-```bash
-$ pnpm install
-```
+I recognize that the distribution of responsibilities among the microservices could have been simplified. However, I wanted to challenge myself by simulating a more complex environment, where orchestrating multiple services simultaneously was necessary. While this made the process more demanding, it also gave me a deeper understanding of what it means to work with this type of architecture at a larger scale.
 
-## Compile and run the project
+Reservo is composed of five repositories:
 
-```bash
-# development
-$ pnpm run start
+- [Frontend built with Astro and React 🚀](https://github.com/Hector-f-Romero/reservo-front)
+- [NestJS API Gateway responsible for routing requests to the appropriate microservice 🧠](https://github.com/Hector-f-Romero/reservo-api-gateway)
+- [Spring Boot microservice that handles CRUD operations for core entities 🎨](https://github.com/Hector-f-Romero/reservo-events-user-ms)
+- [Hybrid NestJS app that uses WebSockets and communicates across services ⌚](https://github.com/Hector-f-Romero/reservo-ws-ms)
+- [NestJS microservice dedicated to authentication 🔐](https://github.com/Hector-f-Romero/reservo-auth-ms)
 
-# watch mode
-$ pnpm run start:dev
+![Architecture Diagram](public/Reservo architecture diagram.png)
 
-# production mode
-$ pnpm run start:prod
-```
+Each repository includes documentation on the main challenges faced and lessons learned throughout development. Looking back, I feel proud of the effort invested and the outcome achieved with this project.
 
-## Run tests
+# Reservo Gateway 🧠
 
-```bash
-# unit tests
-$ pnpm run test
+This project is an API Gateway developed with NestJS, serving as the centralized entry point for the entire Reservo ecosystem. Its main responsibilities include:
 
-# e2e tests
-$ pnpm run test:e2e
+- Acting as an intermediary between the frontend and various microservices.
+- Managing authentication through JWTs stored in cookies.
+- Centralizing error handling across microservices.
+- Communicating with services using NATS as the message broker.
+- Providing a REST API documented with Swagger.
 
-# test coverage
-$ pnpm run test:cov
-```
+NATS was chosen as the message broker due to its simplicity and ease of deployment via Docker, allowing me to focus on business logic without the overhead of complex configuration. The repository includes a `docker-compose` file to spin up the NATS server before running the gateway.
 
-## Deployment
+One of the main challenges in this repository was standardizing how responses were handled between services. To solve this, I developed a `NatsClientWrapper` class that establishes a single connection to the broker and processes responses based on a code attribute returned by the microservices.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Environment Setup ⚙
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Prerequisites
+- Node 22.12.0
+- Docker Desktop
+- pnpm 10.8.0
 
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
+## Project Initialization
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+1. Clone this repository and navigate to the project directory.
+2. Install dependencies using the package manager: `pnpm install`.
+3. Create the environment variables file with: `cp .env.example .env`.
+4. Fill in the required values in the `.env` file.
+5. Start the NATS server with: `docker-compose up -d`.
+6. Run the Gateway server with: `pnpm run start:dev`.
+7. Make sure the following services are running:
+   - Reservo Auth MS
+   - Reservo Events User MS
+   - Reservo WebSocket MS.
+8. Send an `HTTP POST` request to the `/V1/seed` endpoint to populate the database with test data.
 
-## Resources
+By default, the API documentation is available at: `http://localhost:3000/api` .
 
-Check out a few resources that may come in handy when working with NestJS:
+# Licencia
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+See the `LICENSE` file for more information.
