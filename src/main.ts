@@ -1,3 +1,4 @@
+import { Server } from "node:https";
 import { NestFactory } from "@nestjs/core";
 import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -72,8 +73,17 @@ async function bootstrap() {
 		}),
 	);
 
-	await app.listen(enviromentVariables.port);
+	// 6. Start the server
+	const server = await app.listen(enviromentVariables.port);
+
+	const address = server.address();
+
+	const resolvedHost =
+		address.address === "::" || address.address === "0.0.0.0"
+			? "http://localhost"
+			: address.address;
 
 	logger.log(`Gateway is running on port ${enviromentVariables.port} 🚀`);
+	logger.log(`Check Swagger docs: ${resolvedHost}:${address.port}/api 📖`);
 }
 bootstrap();
